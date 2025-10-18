@@ -96,6 +96,8 @@ coverage.xml
 
 # celery 
 celerybeat-schedule.* 
+# Pytest cache
+.pytest_cache/
 
 # SageMath parsed files 
 *.sage.py 
