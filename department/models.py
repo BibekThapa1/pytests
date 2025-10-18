@@ -5,7 +5,7 @@ from django.db import models
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
     content = models.CharField(max_length=500, blank=True, null=True)
-    icon = models.ImageField(upload_to='images/departments/', blank=True, null=True)
+    icon = models.TextField(max_length=200, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

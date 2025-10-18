@@ -11,6 +11,9 @@ def test_create_department_api():
     data = {"name": "Research", "content": "Research Department", "icon": "🔬"}
     response = client.post(url, data, format="json")
 
+    print("Status code:", response.status_code)
+    print("Response data:", response.data)  # This shows exactly why 400
+
     assert response.status_code == 201
     assert response.data["data"]["name"] == "Research"
     assert Department.objects.filter(name="Research").exists()

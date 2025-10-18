@@ -5,9 +5,9 @@ def test_department_entity_creation():
         content="something",
         name="bibek thapa",
         icon="something",
-        id=1
+        id=None
     )
     assert entity.id is None
-    assert entity.name == "HR"
-    assert entity.content == "Human Resources"
+    assert entity.name == "bibek thapa"
+    assert entity.content == "something"
     assert entity.icon == "something"
