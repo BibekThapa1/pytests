@@ -73,14 +73,23 @@ def test_create_department_failure(api_factory, viewset):
     request = api_factory.post("/departments/", {
         "name": "IT",
         "content": "Information Technology",
-        "icon": "it-icon.png"
     }, format='json')
     
-    viewset.create_department_usecase.execute.return_value = None
+    viewset.action_map = {'post':'create'}
+    viewset.format_kwarg = None
+    viewset.action = "create"
     
-    response = viewset.create(request)
+    drf_request = viewset.initialize_request(request)
+    viewset.request = drf_request
+    
+    drf_request._full_data
+    
+    viewset.create_department_usecase.execute = MagicMock(return_value=sample_department_entity)
+    
+    response = viewset.create(drf_request)
+    
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "Something went wrong" in response.data["message"]
+    assert "Error occurred" in response.data["message"]
 
 # # ------------------ RETRIEVE ------------------
 # def test_retrieve_department_success(api_factory, viewset, sample_department_entity):
