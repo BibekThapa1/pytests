@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:17
+    container_name: hospital-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  web:
+    build: .
+    volumes:
+      - .:/app
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+    container_name: hospital-backend
+    command: ./entrypoint.sh
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEBUG=${DEBUG}
+    restart: unless-stopped
+    ports:
+      - "8005:8003"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7
+    container_name: hospital-redis
+    restart: unless-stopped
+
+  celery:
+    build:
+      context: .
+      dockerfile: celery/Dockerfile.celery
+    container_name: hospital-celery
+    command: celery -A core worker -l info
+    volumes:
+      - .:/app
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - PYTHONUNBUFFERED=1
+      - DEBUG=${DEBUG}
+    depends_on:
+      - web
+      - redis
+
+volumes:
+  postgres_data:

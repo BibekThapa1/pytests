@@ -76,10 +76,17 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.{}'.format(
+            os.getenv('DATABASE_ENGINE', 'sqlite3')
+            ),
+        'NAME':os.getenv('DATABASE_NAME','polls'),
+        'USER':os.getenv('DATABASE_USERNAME','user'),
+        'PASSWORD':os.getenv('DATABASE_PASSWORD','password'),
+        'HOST':os.getenv('DATABASE_HOST','host'),
+        'PORT':os.getenv('DATABASE_PORT','5433'),
     }
 }
+
 
 
 # Password validation
@@ -123,3 +130,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Caching settings
+CACHES = {
+    "default":{
+        "BACKEND":"django_redis.cache.RedisCache",
+        "LOCATION":"redis://redis:6379/1",
+        "OPTIONS":{
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
